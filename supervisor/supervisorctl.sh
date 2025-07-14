@@ -13,7 +13,7 @@ BAK_DIR="$BASE_DIR/apps_bak"    # 备份目录
 JAR_NAME="supervisor.jar"
 JDK_HOME="$BASE_DIR/software/jdk21"  # JDK 安装目录
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-DEFAULT_JVM_OPTS="-Duser.timezone=Asia/Shanghai -Dserver.port=8081"
+DEFAULT_JVM_OPTS="-Duser.timezone=Asia/Shanghai -Dserver.port=7088"
 
 # 创建必要的目录结构
 mkdir -p "$APPS_DIR" "$BAK_DIR"
