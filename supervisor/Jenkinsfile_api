@@ -72,4 +72,17 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            cleanWs()
+            echo "🧹 清理工作区完成"
+        }
+        success {
+            echo "✅ 构建与部署成功！"
+        }
+        failure {
+            echo "❌ 构建或部署失败，请检查日志。"
+        }
+    }
 }
