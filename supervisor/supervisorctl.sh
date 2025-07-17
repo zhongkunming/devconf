@@ -12,7 +12,7 @@ APPS_DIR="$BASE_DIR/apps"       # 运行目录
 BAK_DIR="$BASE_DIR/apps_bak"    # 备份目录
 JAR_NAME="supervisor.jar"
 JDK_HOME="$BASE_DIR/software/jdk21"  # JDK 安装目录
-TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 DEFAULT_JVM_OPTS="-Duser.timezone=Asia/Shanghai -Dserver.port=7088"
 
 # 创建必要的目录结构
@@ -52,7 +52,7 @@ print_help() {
     echo "    $0 deploy \"-Xmx512m -Xms256m\""
     echo "    $0 rollback 20240101_123456 \"-Dspring.profiles.active=prod\""
     echo ""
-    echo "备份命名格式: supervisor_YYYYMMDD_HHMMSS.jar"
+    echo "备份命名格式: supervisor.jar.YYYYMMDD_HHMMSS"
 }
 
 # 功能: 获取应用PID
