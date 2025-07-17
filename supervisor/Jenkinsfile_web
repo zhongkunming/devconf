@@ -55,7 +55,7 @@ pipeline {
                                             mv dist html'''
                                     ),
                                     sshTransfer(
-                                        sourceFiles: 'supervisorctl.conf',
+                                        sourceFiles: 'supervisorweb.conf',
                                         remoteDirectory: '/conf',
                                         execCommand:
                                             '''ngx-reload'''
