@@ -12,7 +12,7 @@ APPS_DIR="$BASE_DIR/apps"       # 运行目录
 BAK_DIR="$BASE_DIR/apps_bak"    # 备份目录
 JAR_NAME="supervisor.jar"
 JDK_HOME="$BASE_DIR/software/jdk21"  # JDK 安装目录
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 DEFAULT_JVM_OPTS="-Duser.timezone=Asia/Shanghai -Dserver.port=7088"
 
 # 创建必要的目录结构
@@ -118,7 +118,7 @@ stop_application() {
 backup_current_jar() {
     if [ -f "$APPS_DIR/$JAR_NAME" ]; then
         echo "备份当前运行的应用..."
-        BACKUP_NAME="${JAR_NAME%.jar}_$TIMESTAMP.jar"
+        BACKUP_NAME="${JAR_NAME}.$TIMESTAMP"
         mv -v "$APPS_DIR/$JAR_NAME" "$BAK_DIR/$BACKUP_NAME"
         echo "已备份至: $BAK_DIR/$BACKUP_NAME"
         return 0
@@ -129,7 +129,7 @@ backup_current_jar() {
 # 功能: 回滚到指定版本
 rollback_to_version() {
     local timestamp=$1
-    BACKUP_JAR="$BAK_DIR/supervisor_$timestamp.jar"
+    BACKUP_JAR="$BAK_DIR/$JAR_NAME.$timestamp"
 
     if [ ! -f "$BACKUP_JAR" ]; then
         echo "错误：备份文件 $BACKUP_JAR 不存在！"
@@ -147,7 +147,7 @@ rollback_to_version() {
 # 功能: 列出可用备份
 list_backups() {
     echo "可用备份:"
-    ls -1 "$BAK_DIR" | grep "supervisor_.*\.jar$" | cut -d'_' -f2- | cut -d'.' -f1
+    ls -1 "$BAK_DIR" | grep "supervisor\.jar\..*$" | cut -d'.' -f3- | sort -r
 }
 
 # 功能: 部署新版本
