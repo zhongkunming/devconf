@@ -53,15 +53,15 @@ pipeline {
                                 configName: 'deploy-supervisor',
                                 transfers: [
                                     sshTransfer(
-                                        sourceFiles: 'target/supervisor.jar'
-                                        removePrefix: 'target',
+                                        sourceFiles: 'target/supervisor.jar',
+                                        removePrefix: 'target'
                                     ),
                                     sshTransfer(
                                         sourceFiles: 'supervisorctl.sh'
                                         remoteDirectory: '/sbin',
                                         execCommand:
                                             '''chmod +x ./sbin/supervisorctl.sh
-                                            ./sbin/supervisorctl.sh start''',
+                                            ./sbin/supervisorctl.sh start'''
                                     )
                                 ],
                                 verbose: true
