@@ -17,26 +17,24 @@ pipeline {
             }
         }
 
-        stage('build') {
+        stage('fetch script') {
             steps {
                 script {
-                    sh '''#!/bin/bash
-                    export NVM_DIR="$JENKINS_HOME/software/nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
-                    nvm install --lts
-                    nvm use --lts
-                    npm install -g pnpm --registry http://192.168.10.10:30380/repository/npm-registry-public/
-                    pnpm install --registry http://192.168.10.10:30380/repository/npm-registry-public/
-                    pnpm build'''
+                    echo "📎 下载打包脚本脚本和nginx配置..."
+                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/supervisor/supervisorweb.conf -o supervisorweb.conf'
+                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/supervisor/supervisorweb.sh -o supervisorweb.sh'
                 }
             }
         }
 
-        stage('fetch script') {
+        stage('build') {
             steps {
                 script {
-                    echo "📎 下载启动脚本..."
-                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/supervisor/supervisorweb.conf -o supervisorweb.conf'
+                    echo "🏗️ 使用脚本执行构建..."
+                    sh '''
+                        chmod +x supervisorweb.sh
+                        bash supervisorweb.sh
+                    '''
                 }
             }
         }
