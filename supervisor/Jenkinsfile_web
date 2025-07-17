@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        timestamps()
+    }
+
+    stages {
+        stage('pull source code') {
+            steps {
+                echo "🚀 开始拉取源码..."
+                git branch: 'main',
+                    url: 'http://192.168.10.10:30180/zhongkunming/supervisor-ui.git',
+                    credentialsId: 'jenkins-git'
+            }
+        }
+
+        stage('build') {
+            steps {
+                script {
+                    sh '''#!/bin/bash
+                    export NVM_DIR="$JENKINS_HOME/software/nvm"
+                    [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
+                    nvm install --lts
+                    nvm use --lts
+                    npm install -g pnpm --registry http://192.168.10.10:30380/repository/npm-registry-public/
+                    pnpm install --registry http://192.168.10.10:30380/repository/npm-registry-public/
+                    pnpm build'''
+                }
+            }
+        }
+
+        stage('fetch script') {
+            steps {
+                script {
+                    echo "📎 下载启动脚本..."
+                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/supervisor/supervisorweb.conf -o supervisorweb.conf'
+                }
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                script {
+                    echo "📡 正在部署到服务器..."
+                    sshPublisher(
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'deploy-supervisorweb',
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'dist/**',
+                                        execCommand:
+                                            '''rm -rf html
+                                            mv dist html'''
+                                    ),
+                                    sshTransfer(
+                                        sourceFiles: 'supervisorctl.conf',
+                                        remoteDirectory: '/conf',
+                                        execCommand:
+                                            '''ngx-reload'''
+                                    )
+                                ],
+                                verbose: true
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            echo "🧹 清理工作区完成"
+        }
+        success {
+            echo "✅ 构建与部署成功！"
+        }
+        failure {
+            echo "❌ 构建或部署失败，请检查日志。"
+        }
+    }
+}
