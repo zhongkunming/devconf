@@ -57,7 +57,7 @@ pipeline {
                                         removePrefix: 'target'
                                     ),
                                     sshTransfer(
-                                        sourceFiles: 'supervisorctl.sh'
+                                        sourceFiles: 'supervisorctl.sh',
                                         remoteDirectory: '/sbin',
                                         execCommand:
                                             '''chmod +x ./sbin/supervisorctl.sh
