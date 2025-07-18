@@ -48,10 +48,13 @@ pipeline {
                                 configName: 'deploy-ruoyiweb',
                                 transfers: [
                                     sshTransfer(
-                                        sourceFiles: 'dist/**',
+                                        sourceFiles: 'dist.tar.gz',
                                         execCommand:
-                                            '''rm -rf html
-                                            mv dist html'''
+                                            '''
+                                            rm -rf html
+                                            mkdir -p html
+                                            tar -xzf dist.tar.gz -C html
+                                            '''
                                     ),
                                     sshTransfer(
                                         sourceFiles: 'ruoyiweb.conf',

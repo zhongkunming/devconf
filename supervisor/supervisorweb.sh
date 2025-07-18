@@ -6,3 +6,4 @@ nvm use --lts
 npm install -g pnpm --registry http://192.168.10.10:30380/repository/npm-registry-public/
 pnpm install --registry http://192.168.10.10:30380/repository/npm-registry-public/
 pnpm build
+tar -czf dist.tar.gz dist
