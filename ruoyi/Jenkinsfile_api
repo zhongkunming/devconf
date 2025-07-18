@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        timestamps()
+    }
+
+    tools {
+        jdk 'jdk21'
+        maven 'maven3.9'
+    }
+
+    stages {
+        stage('pull source code') {
+            steps {
+                echo "🚀 开始拉取源码..."
+                git branch: 'master',
+                    url: 'https://github.com/yangzongzhuan/RuoYi-Vue-fast.git'
+            }
+        }
+
+        stage('build jar') {
+            steps {
+                script {
+                    echo "📦 开始构建 Jar 包..."
+                    sh 'java -version'
+                    sh 'mvn -v'
+                    sh 'mvn help:system'
+                    sh 'mvn -Dmaven.test.skip=true clean package'
+                }
+            }
+        }
+
+        stage('fetch script') {
+            steps {
+                script {
+                    echo "📎 下载启动脚本..."
+                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/ruoyi/ruoyictl.sh -o ruoyictl.sh'
+                }
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                script {
+                    echo "📡 正在部署到服务器..."
+                    sshPublisher(
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'deploy-ruoyi',
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'target/ruoyi.jar',
+                                        removePrefix: 'target'
+                                    ),
+                                    sshTransfer(
+                                        sourceFiles: 'ruoyictl.sh',
+                                        remoteDirectory: '/sbin',
+                                        execCommand:
+                                            '''chmod +x ./sbin/ruoyictl.sh
+                                            ./sbin/ruoyictl.sh start'''
+                                    )
+                                ],
+                                verbose: true
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            echo "🧹 清理工作区完成"
+        }
+        success {
+            echo "✅ 构建与部署成功！"
+        }
+        failure {
+            echo "❌ 构建或部署失败，请检查日志。"
+        }
+    }
+}

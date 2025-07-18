@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        timestamps()
+    }
+
+    stages {
+        stage('pull source code') {
+            steps {
+                echo "🚀 开始拉取源码..."
+                git branch: 'master',
+                    url: 'https://github.com/yangzongzhuan/RuoYi-Vue3.git'
+            }
+        }
+
+        stage('fetch script') {
+            steps {
+                script {
+                    echo "📎 下载打包脚本脚本和nginx配置..."
+                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/ruoyi/ruoyiweb.conf -o ruoyiweb.conf'
+                    sh 'curl http://192.168.10.10:30180/zhongkunming/devshell/raw/branch/main/ruoyi/ruoyiweb.sh -o ruoyiweb.sh'
+                }
+            }
+        }
+
+        stage('build') {
+            steps {
+                script {
+                    echo "🏗️ 使用脚本执行构建..."
+                    sh '''
+                        chmod +x ruoyiweb.sh
+                        bash ruoyiweb.sh
+                    '''
+                }
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                script {
+                    echo "📡 正在部署到服务器..."
+                    sshPublisher(
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'deploy-ruoyiweb',
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'dist/**',
+                                        execCommand:
+                                            '''rm -rf html
+                                            mv dist html'''
+                                    ),
+                                    sshTransfer(
+                                        sourceFiles: 'ruoyiweb.conf',
+                                        remoteDirectory: '/conf',
+                                        execCommand:
+                                            '''ngx-reload'''
+                                    )
+                                ],
+                                verbose: true
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+            echo "🧹 清理工作区完成"
+        }
+        success {
+            echo "✅ 构建与部署成功！"
+        }
+        failure {
+            echo "❌ 构建或部署失败，请检查日志。"
+        }
+    }
+}
