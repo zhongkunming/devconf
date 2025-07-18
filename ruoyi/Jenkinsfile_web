@@ -53,7 +53,8 @@ pipeline {
                                             '''
                                             rm -rf html
                                             mkdir -p html
-                                            tar -xzf dist.tar.gz -C html
+                                            tar -xzf dist.tar.gz
+                                            mv dist html
                                             '''
                                     ),
                                     sshTransfer(
