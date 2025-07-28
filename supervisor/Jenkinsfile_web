@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo "🚀 开始拉取源码..."
                 git branch: 'main',
-                    url: 'http://192.168.10.10:30180/zhongkunming/supervisor-ui.git',
+                    url: 'http://192.168.10.10:30180/zhongkunming/supervisor-web.git',
                     credentialsId: 'jenkins-git'
             }
         }
