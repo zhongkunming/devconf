@@ -28,7 +28,7 @@ pipeline {
                     echo "📦 开始构建 Jar 包..."
                     sh 'java -version'
                     sh 'mvn -v'
-                    sh 'mvn -Dmaven.test.skip=true clean package'
+                    sh 'mvn -DskipTests=true clean package'
                 }
             }
         }
