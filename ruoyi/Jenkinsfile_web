@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo "🚀 开始拉取源码..."
                 git branch: 'master',
-                    url: 'http://192.168.10.10:30180/zhongkunming/RuoYi-Vue3.git'
+                    url: 'http://192.168.10.10:30180/mirror/RuoYi-Vue3.git'
             }
         }
 
