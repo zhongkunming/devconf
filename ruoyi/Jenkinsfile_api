@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo "🚀 开始拉取源码..."
                 git branch: 'master',
-                    url: 'https://github.com/yangzongzhuan/RuoYi-Vue-fast.git'
+                    url: 'http://192.168.10.10:30180/zhongkunming/RuoYi-Vue-fast.git'
             }
         }
 

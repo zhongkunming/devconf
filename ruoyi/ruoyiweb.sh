@@ -5,5 +5,5 @@ nvm install --lts
 nvm use --lts
 npm install -g yarn --registry http://192.168.10.10:30380/repository/npm-registry-public/
 yarn --registry http://192.168.10.10:30380/repository/npm-registry-public/
-pnpm build:prod
+yarn build:prod
 tar -czf dist.tar.gz dist
