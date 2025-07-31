@@ -6,5 +6,5 @@ nvm use --lts
 npm install -g pnpm --registry http://192.168.10.10:30380/repository/npm-registry-public/
 pnpm install sortablejs
 pnpm install --registry http://192.168.10.10:30380/repository/npm-registry-public/
-pnpm build
+pnpm build:prod
 tar -czf dist.tar.gz dist
