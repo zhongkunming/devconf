@@ -11,8 +11,8 @@ pipeline {
         stage('pull source code') {
             steps {
                 echo "🚀 开始拉取源码..."
-                git branch: 'main',
-                    url: 'http://192.168.10.10:30180/zhongkunming/supervisor-web.git',
+                git branch: 'supervisor-v1',
+                    url: 'http://192.168.10.10:30180/zhongkunming/RuoYi-Vue3.git',
                     credentialsId: 'jenkins-git'
             }
         }
