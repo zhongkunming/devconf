@@ -246,12 +246,11 @@ start_application() {
     echo "🗑️  GC日志: $GC_LOG"
     
     # 构建完整的JVM参数
-    local full_jvm_opts="$DEFAULT_JVM_OPTS $extra_opts -Xloggc:$GC_LOG -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
-    echo "⚙️  启动命令: $JAVA_CMD $full_jvm_opts -jar $JAR_NAME"
+    local full_jvm_opts="$DEFAULT_JVM_OPTS $extra_opts -Xlog:gc*:$GC_LOG:time"
+    echo "⚙️  启动命令: $JAVA_CMD $full_jvm_opts -jar $APPS_DIR/$JAR_NAME"
 
-    cd "$APPS_DIR"
     # 重定向输出到日志文件
-    nohup $JAVA_CMD $full_jvm_opts -jar "$JAR_NAME" > "$APP_LOG" 2>&1 &
+    nohup $JAVA_CMD $full_jvm_opts -jar $APPS_DIR/$JAR_NAME > "$APP_LOG" 2>&1 &
     PID=$!
     echo "🔄 等待应用启动..."
     sleep 3  # 等待应用启动
